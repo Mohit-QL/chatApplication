@@ -197,16 +197,28 @@ if (isset($_GET['logout'])) {
         <!-- Chat window -->
         <div class="chat-window">
             <?php if ($chat_partner): ?>
-                <div class="chat-header mb-4">
-                    <img src="uploads/profile/<?= htmlspecialchars($chat_partner['image']) ?>" alt="Partner" style="object-fit: cover;">
-                    <h6 class="mb-0"><?= htmlspecialchars($chat_partner['fname'] . ' ' . $chat_partner['lname']) ?>
-                        <?php if ($chat_partner['status'] === 'Online now') { ?>
-                            <span class="text-success ms-2">● Online</span>
-                        <?php } else { ?>
-                            <span class="text-muted ms-2">● Offline</span>
-                        <?php } ?>
-                    </h6>
+                <!-- In your chat-window section, modify the chat-header -->
+                <div class="chat-header mb-4 d-flex align-items-center">
+                    <img src="uploads/profile/<?= htmlspecialchars($chat_partner['image']) ?>"
+                        alt="Partner"
+                        class="me-3"
+                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+
+                    <div class="d-flex flex-column">
+                        <div class="d-flex align-items-center">
+                            <h6 class="mb-0 me-2"><?= htmlspecialchars($chat_partner['fname'] . ' ' . $chat_partner['lname']) ?></h6>
+                            <?php if ($chat_partner['status'] === 'Online now') { ?>
+                                <span class="text-success small">● Online</span>
+                            <?php } else { ?>
+                                <span class="text-muted small">● Offline</span>
+                            <?php } ?>
+                        </div>
+                        <div id="typingIndicator" class="typing-indicator" style="display: none;">
+                            <span class="text-muted small">typing...</span>
+                        </div>
+                    </div>
                 </div>
+
 
                 <div class="messages" id="chatMessages">
                     <!-- Messages will be loaded here via JavaScript -->
@@ -287,60 +299,7 @@ if (isset($_GET['logout'])) {
 
         let autoScroll = true;
 
-        // function loadMessages() {
-        //     if (!chatWith) return;
 
-        //     fetch('get_messages.php?chat_with=' + chatWith)
-        //         .then(response => response.json())
-        //         .then(messages => {
-        //             const container = document.getElementById('chatMessages');
-
-        //             const wasAtBottom = isScrolledToBottom(container);
-
-        //             container.innerHTML = '';
-
-        //             if (messages.length === 0) {
-        //                 container.innerHTML = `
-        //         <div class="no-messages-yet">
-        //             <h5>No messages yet</h5>
-        //             <p class="text-muted">Say hello to start the conversation!</p>
-        //         </div>`;
-        //                 return;
-        //             }
-
-        //             let messagesHTML = '';
-        //             for (let i = 0; i < messages.length; i++) {
-        //                 const msg = messages[i];
-        //                 const isSent = msg.sender_id == userId;
-        //                 const isLastFromSender = (i === messages.length - 1 || messages[i + 1].sender_id !== msg.sender_id);
-        //                 const image = isSent ? userImage : partnerImage;
-
-        //                 const messageLines = msg.message.split(' ');
-        //                 let messageHTML = '';
-        //                 for (let j = 0; j < messageLines.length; j += 10) {
-        //                     messageHTML += messageLines.slice(j, j + 10).join(' ') + '<br>';
-        //                 }
-
-        //                 messagesHTML += `
-        //         <div class="message ${isSent ? 'sent' : 'received'}">
-        //             <div class="text">${messageHTML}</div>
-        //             ${isLastFromSender ? `
-        //                 <div class="message-footer d-flex align-items-center justify-content-${isSent ? 'end' : 'start'} mt-1">
-        //                     <small class="${isSent ? 'text-white me-1' : 'text-muted'}">${formatTime(msg.created_at)}</small>
-        //                     ${isSent ? `<i class="fa-solid fa-check-double ${msg.seen == 1 ? 'text-white' : 'text-dark'}"></i>` : ''}
-        //                     <img class="msg-profile-pic ms-2" src="${image}" alt="User" />
-        //                 </div>
-        //             ` : ''}
-        //         </div>`;
-        //             }
-
-        //             container.innerHTML = messagesHTML;
-
-        //             if (wasAtBottom || autoScroll) {
-        //                 container.scrollTop = container.scrollHeight;
-        //             }
-        //         });
-        // }
 
         let lastMessageId = 0;
 
@@ -384,18 +343,18 @@ if (isset($_GET['logout'])) {
                         messageDiv.dataset.messageId = msg.id; // Add this line
 
                         messageDiv.innerHTML = `
-    ${msg.message ? `<div class="text">${msg.message}</div>` : ''}
-    ${attachmentHTML}
-    <div class="message-options">
-        <button class="edit-message">Edit</button>
-        <button class="delete-message">Delete</button>
-    </div>
-    ${isLastFromSender ? `
-        <div class="message-footer d-flex align-items-center justify-content-${isSent ? 'end' : 'start'} mt-1">
-            <small class="${isSent ? 'text-white me-1' : 'text-muted'}">${formatTime(msg.created_at)}</small>
-            ${isSent ? `<i class="fa-solid fa-check-double ${msg.seen == 1 ? 'text-white' : 'text-dark'}"></i>` : ''}
-            <img class="msg-profile-pic ms-2" src="${image}" alt="User" />
-        </div>` : ''}`;
+                                                ${msg.message ? `<div class="text">${msg.message}</div>` : ''}
+                                                ${attachmentHTML}
+                                                                <div class="message-options">
+                                                                    <button class="edit-message">Edit</button>
+                                                                    <button class="delete-message">Delete</button>
+                                                                </div>
+                                                                ${isLastFromSender ? `
+                                                                <div class="message-footer d-flex align-items-center justify-content-${isSent ? 'end' : 'start'} mt-1">
+                                                                    <small class="${isSent ? 'text-white me-1' : 'text-muted'}">${formatTime(msg.created_at)}</small>
+                                                                    ${isSent ? `<i class="fa-solid fa-check-double ${msg.seen == 1 ? 'text-white' : 'text-dark'}"></i>` : ''}
+                                                                    <img class="msg-profile-pic ms-2" src="${image}" alt="User" />
+                                                                </div>` : ''}`;
 
                         container.appendChild(messageDiv);
                     }
@@ -405,6 +364,23 @@ if (isset($_GET['logout'])) {
                     }
                 });
         }
+
+        function checkTypingStatus() {
+            if (!chatWith) return;
+
+            fetch('get_typing_status.php?receiver_id=' + chatWith)
+                .then(response => response.json())
+                .then(data => {
+                    const typingIndicator = document.getElementById('typingIndicator');
+                    if (data.is_typing) {
+                        typingIndicator.style.display = 'block';
+                    } else {
+                        typingIndicator.style.display = 'none';
+                    }
+                });
+        }
+
+        setInterval(checkTypingStatus, 1000);
 
         function isScrolledToBottom(element) {
             return element.scrollHeight - element.scrollTop === element.clientHeight;
@@ -570,92 +546,6 @@ if (isset($_GET['logout'])) {
                     });
             });
         });
-
-        // function loadMessages() {
-        //     if (!chatWith) return;
-
-        //     fetch('get_messages.php?chat_with=' + chatWith)
-        //         .then(response => response.json())
-        //         .then(messages => {
-        //             const container = document.getElementById('chatMessages');
-        //             const wasAtBottom = isScrolledToBottom(container);
-
-        //             container.innerHTML = '';
-
-        //             if (messages.length === 0) {
-        //                 container.innerHTML = `
-        //         <div class="no-messages-yet">
-        //             <h5>No messages yet</h5>
-        //             <p class="text-muted">Say hello to start the conversation!</p>
-        //         </div>`;
-        //                 return;
-        //             }
-
-        //             let messagesHTML = '';
-        //             for (let i = 0; i < messages.length; i++) {
-        //                 const msg = messages[i];
-        //                 const isSent = msg.sender_id == userId;
-        //                 const isLastFromSender = (i === messages.length - 1 || messages[i + 1].sender_id !== msg.sender_id);
-        //                 const image = isSent ? userImage : partnerImage;
-
-        //                 // Build attachment HTML if exists
-        //                 let attachmentHTML = '';
-        //                 if (msg.attachment) {
-        //                     const fileExt = msg.attachment.split('.').pop().toLowerCase();
-
-        //                     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt)) {
-        //                         attachmentHTML = `
-        //                 <div class="attachment-container mt-2">
-        //                     <img src="${msg.attachment}" class="message-attachment" style="max-width: 100%; max-height: 300px; border-radius: 10px;">
-        //                 </div>`;
-        //                     } else if (['mp4', 'mov', 'avi'].includes(fileExt)) {
-        //                         attachmentHTML = `
-        //                 <div class="attachment-container mt-2">
-        //                     <video controls class="message-attachment" style="max-width: 100%; max-height: 300px; border-radius: 10px;">
-        //                         <source src="${msg.attachment}" type="video/${fileExt === 'mov' ? 'quicktime' : fileExt === 'avi' ? 'x-msvideo' : 'mp4'}">
-        //                         Your browser does not support the video tag.
-        //                     </video>
-        //                 </div>`;
-        //                     } else if (fileExt === 'pdf') {
-        //                         attachmentHTML = `
-        //                 <div class="attachment-container mt-2">
-        //                     <a href="${msg.attachment}" target="_blank" class="d-flex align-items-center text-decoration-none">
-        //                         <i class="fas fa-file-pdf me-2" style="font-size: 1.5rem;"></i>
-        //                         <span>View PDF</span>
-        //                     </a>
-        //                 </div>`;
-        //                     } else {
-        //                         attachmentHTML = `
-        //                 <div class="attachment-container mt-2">
-        //                     <a href="${msg.attachment}" target="_blank" class="d-flex align-items-center text-decoration-none">
-        //                         <i class="fas fa-file-download me-2" style="font-size: 1.5rem;"></i>
-        //                         <span>Download File</span>
-        //                     </a>
-        //                 </div>`;
-        //                     }
-        //                 }
-
-        //                 messagesHTML += `
-        //         <div class="message ${isSent ? 'sent' : 'received'}">
-        //             ${msg.message ? `<div class="text">${msg.message}</div>` : ''}
-        //             ${attachmentHTML}
-        //             ${isLastFromSender ? `
-        //                 <div class="message-footer d-flex align-items-center justify-content-${isSent ? 'end' : 'start'} mt-1">
-        //                     <small class="${isSent ? 'text-white me-1' : 'text-muted'}">${formatTime(msg.created_at)}</small>
-        //                     ${isSent ? `<i class="fa-solid fa-check-double ${msg.seen == 1 ? 'text-white' : 'text-dark'}"></i>` : ''}
-        //                     <img class="msg-profile-pic ms-2" src="${image}" alt="User" />
-        //                 </div>
-        //             ` : ''}
-        //         </div>`;
-        //             }
-
-        //             container.innerHTML = messagesHTML;
-
-        //             if (wasAtBottom || autoScroll) {
-        //                 container.scrollTop = container.scrollHeight;
-        //             }
-        //         });
-        // }
     </script>
 
     <script>
@@ -672,7 +562,7 @@ if (isset($_GET['logout'])) {
                     activeMessage = messageElement;
                     longPressTimer = setTimeout(() => {
                         showMessageOptions(messageElement);
-                        e.preventDefault(); 
+                        e.preventDefault();
                     }, 1000);
                 }
             });
@@ -845,6 +735,74 @@ if (isset($_GET['logout'])) {
         setupMessageOptions();
     </script>
 
+    <script>
+        let typingTimer;
+        let isTyping = false;
+        let lastTypingTime = 0;
+
+        messageInput.addEventListener('input', () => {
+            const now = Date.now();
+
+            if (now - lastTypingTime > 300) {
+                if (!isTyping) {
+                    isTyping = true;
+                    sendTypingStatus(true);
+                }
+
+                clearTimeout(typingTimer);
+                typingTimer = setTimeout(() => {
+                    isTyping = false;
+                    sendTypingStatus(false);
+                }, 1500);
+            }
+
+            lastTypingTime = now;
+        });
+
+        messageInput.addEventListener('blur', () => {
+            if (isTyping) {
+                isTyping = false;
+                sendTypingStatus(false);
+                clearTimeout(typingTimer);
+            }
+        });
+
+        function sendTypingStatus(typing) {
+            if (!chatWith) return;
+
+            fetch('typing_status.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `receiver_id=${chatWith}&typing=${typing ? 1 : 0}`
+            }).catch(error => console.error('Error sending typing status:', error));
+        }
+
+        function checkTypingStatus() {
+            if (!chatWith) return;
+
+            fetch(`get_typing_status.php?receiver_id=${chatWith}&_=${Date.now()}`)
+                .then(response => response.json())
+                .then(data => {
+                    const typingIndicator = document.getElementById('typingIndicator');
+                    typingIndicator.style.display = data.is_typing ? 'flex' : 'none';
+                })
+                .catch(error => console.error('Error checking typing status:', error));
+        }
+
+        let typingCheckInterval = setInterval(checkTypingStatus, 1000);
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                clearInterval(typingCheckInterval);
+            } else {
+                clearInterval(typingCheckInterval);
+                typingCheckInterval = setInterval(checkTypingStatus, 1000);
+                checkTypingStatus(); 
+            }
+        });
+    </script>
 
 
 </body>

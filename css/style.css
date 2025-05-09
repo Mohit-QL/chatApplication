@@ -521,6 +521,49 @@ video.message-attachment {
   display: block;
 }
 
+.typing-indicator {
+  font-size: 0.9rem;
+  color: #6c757d;
+  height: 1.2rem;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  margin-top: 7px;
+  gap: 8px;
+}
+
+.typing-indicator::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #6c757d;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.9);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+.deleted-message {
+  opacity: 0.7;
+}
+
+.deleted-message .text {
+  font-style: italic;
+  color: #6c757d !important;
+}
 
 
 /* Responsive Styles */
