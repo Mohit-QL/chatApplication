@@ -1,7 +1,7 @@
 <?php
 session_start();
 include_once 'loadenv.php';
-loadEnv('.env'); 
+loadEnv('.env');
 
 
 include_once 'db.php';
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // ------------------ Facebook Login ------------------ //
 $fb = new \Facebook\Facebook([
-  'app_id' => $_ENV['FACEBOOK_APP_ID'],    
+  'app_id' => $_ENV['FACEBOOK_APP_ID'],
   'app_secret' => $_ENV['FACEBOOK_APP_SECRET'],
   'default_graph_version' => 'v18.0',
 ]);
@@ -59,7 +59,9 @@ include_once './header.php';
 
   <div class="login-container">
     <div class="login-image">
+      <img src="./ss/upscalemedia-transformed.png" alt="Login Image" style="width: 100%; height: auto; background-color: #fef1f1;">
     </div>
+
     <form class="login-form" action="login.php" method="POST">
       <h2>Login</h2>
 

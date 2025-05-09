@@ -135,12 +135,12 @@ if (isset($_GET['logout'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messages</title>
+    <title>Chat Application</title>
     <link rel="stylesheet" href="./css/style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="icon" href="./ss/Chat-App-logo-design-Graphics-5233742-1-1-580x387-removebg-preview.png" type="image/png">
 </head>
 
 <body>
@@ -153,7 +153,7 @@ if (isset($_GET['logout'])) {
                 <img src="uploads/profile/<?= htmlspecialchars($user['image']) ?>" class="rounded-circle me-4" width="70" height="70" alt="User">
                 <div>
                     <h6 class="mb-0 text-start"><?= htmlspecialchars($user['fname']) . ' ' . htmlspecialchars($user['lname']) ?></h6>
-                    <p class="text-muted mb-0 text-start">@<?= htmlspecialchars(strtolower($user['fname'] . $user['lname'])) ?></p>
+                    <p class=" mb-0 text-start">@<?= htmlspecialchars(strtolower($user['fname'] . $user['lname'])) ?></p>
                     <a href="?logout=true" class="btn btn-sm mt-2 rounded-pill text-white" style="font-size: 14px; padding: 4px 20px; background: linear-gradient(to right, #fbb199, #f28b82);">Logout</a>
                 </div>
             </div>
@@ -175,12 +175,12 @@ if (isset($_GET['logout'])) {
                                 <div class="ms-2">
                                     <strong><?= htmlspecialchars($row['fname']) . ' ' . htmlspecialchars($row['lname']) ?></strong><br>
                                     <!-- <small class="text-muted"><?= $row['status'] ?></small><br> -->
-                                    <small class="text-muted d-block"><?= htmlspecialchars($row['last_message'] ?? 'No messages yet') ?></small>
+                                    <small class=" d-block"><?= htmlspecialchars($row['last_message'] ?? 'No messages yet') ?></small>
                                 </div>
                             </div>
                             <div class="text-end">
                                 <?php if (!empty($row['last_message_time'])): ?>
-                                    <small class="text-muted me-2"><?= date('h:i A', strtotime($row['last_message_time'])) ?> </small><br>
+                                    <small class=""><?= date('h:i A', strtotime($row['last_message_time'])) ?> </small><br>
                                 <?php endif; ?>
                                 <?php if ($row['unread_count'] > 0): ?>
                                     <span class="badge rounded-pill"><?= $row['unread_count'] ?></span>
@@ -197,24 +197,28 @@ if (isset($_GET['logout'])) {
         <!-- Chat window -->
         <div class="chat-window">
             <?php if ($chat_partner): ?>
-                <!-- In your chat-window section, modify the chat-header -->
-                <div class="chat-header mb-4 d-flex align-items-center">
+                <div class="chat-header">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
                     <img src="uploads/profile/<?= htmlspecialchars($chat_partner['image']) ?>"
                         alt="Partner"
-                        class="me-3"
-                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+                        class="me-2">
 
-                    <div class="d-flex flex-column">
-                        <div class="d-flex align-items-center">
-                            <h6 class="mb-0 me-2"><?= htmlspecialchars($chat_partner['fname'] . ' ' . $chat_partner['lname']) ?></h6>
-                            <?php if ($chat_partner['status'] === 'Online now') { ?>
-                                <span class="text-success small">● Online</span>
-                            <?php } else { ?>
-                                <span class="text-muted small">● Offline</span>
-                            <?php } ?>
+                    <div class="chat-header-content">
+                        <div class="chat-header-top-row">
+                            <div class="chat-header-user">
+                                <h6><?= htmlspecialchars($chat_partner['fname'] . ' ' . $chat_partner['lname']) ?></h6>
+                                <span class="status-indicator <?= $chat_partner['status'] === 'Online now' ? 'text-online' : 'text-offline' ?>">
+                                    ● <?= $chat_partner['status'] === 'Online now' ? 'Online' : 'Offline' ?>
+                                </span>
+                            </div>
+                            <button id="themeToggle" class="theme-toggle">
+                                <i class="fas fa-moon"></i>
+                            </button>
                         </div>
+
                         <div id="typingIndicator" class="typing-indicator" style="display: none;">
-                            <span class="text-muted small">typing...</span>
+                            <span>typing...</span>
                         </div>
                     </div>
                 </div>
@@ -351,7 +355,7 @@ if (isset($_GET['logout'])) {
                                                                 </div>
                                                                 ${isLastFromSender ? `
                                                                 <div class="message-footer d-flex align-items-center justify-content-${isSent ? 'end' : 'start'} mt-1">
-                                                                    <small class="${isSent ? 'text-white me-1' : 'text-muted'}">${formatTime(msg.created_at)}</small>
+                                                                    <small style="" class="${isSent ? 'me-1' : ''}">${formatTime(msg.created_at)}</small>
                                                                     ${isSent ? `<i class="fa-solid fa-check-double ${msg.seen == 1 ? 'text-white' : 'text-dark'}"></i>` : ''}
                                                                     <img class="msg-profile-pic ms-2" src="${image}" alt="User" />
                                                                 </div>` : ''}`;
@@ -799,10 +803,55 @@ if (isset($_GET['logout'])) {
             } else {
                 clearInterval(typingCheckInterval);
                 typingCheckInterval = setInterval(checkTypingStatus, 1000);
-                checkTypingStatus(); 
+                checkTypingStatus();
             }
         });
     </script>
+
+    <script>
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            const chatList = document.querySelector('.chat-list');
+            const profileBox = document.getElementById('profile-box');
+
+            chatList.classList.toggle('active');
+
+            if (chatList.classList.contains('active')) {
+                profileBox.classList.add('fixed');
+            } else {
+                profileBox.classList.remove('fixed');
+            }
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const icon = themeToggle.querySelector('i');
+
+            function updateIconStyle(isDark) {
+                if (isDark) {
+                    icon.classList.replace('fa-moon', 'fa-sun');
+                    icon.style.color = '#FFC107';
+                } else {
+                    icon.classList.replace('fa-sun', 'fa-moon');
+                    icon.style.color = '#000';
+                }
+            }
+
+            const savedTheme = localStorage.getItem('theme');
+            const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const isDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+            }
+            updateIconStyle(isDark);
+
+            themeToggle.addEventListener('click', function() {
+                const darkMode = document.body.classList.toggle('dark-theme');
+                localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+                updateIconStyle(darkMode);
+            });
+        });
+    </script>
+
 
 
 </body>
