@@ -1,0 +1,16 @@
+# Ignore .env file
+.env
+
+# Ignore the vendor directory (composer dependencies)
+vendor/
+
+# Ignore IDE and editor files (e.g., for VSCode, PHPStorm, etc.)
+.vscode/
+.idea/
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore Composer lock file (if you don't want it tracked, but usually, you do)
+composer.lock

@@ -1,0 +1,7 @@
+{
+    "require": {
+        "facebook/graph-sdk": "^5.1",
+        "google/apiclient": "^2.18",
+        "guzzlehttp/guzzle": "^7.9"
+    }
+}
